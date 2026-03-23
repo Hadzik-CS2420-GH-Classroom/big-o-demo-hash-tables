@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Build, run the Big O demo, and generate Plotly charts — one command."""
+"""Build, run the Big O demo, and generate Plotly charts -- one command."""
 
 import csv
 import subprocess
@@ -10,7 +10,7 @@ from pathlib import Path
 try:
     import plotly.graph_objects as go
 except ImportError:
-    print("plotly not found — installing...")
+    print("plotly not found -- installing...")
     subprocess.check_call([sys.executable, "-m", "pip", "install", "plotly"])
     import plotly.graph_objects as go
 
@@ -45,7 +45,7 @@ def find_executable():
 def build_and_run():
     exe = find_executable()
     if exe is None:
-        print("No executable found — building with CMake...")
+        print("No executable found -- building with CMake...")
         build_dir = REPO_DIR / "build"
         subprocess.run(["cmake", "-B", str(build_dir), str(REPO_DIR)], check=True)
         subprocess.run(["cmake", "--build", str(build_dir)], check=True)
@@ -96,7 +96,7 @@ def build_chart(op_name, structures):
             x=data["n"],
             y=data["time"],
             mode="lines+markers",
-            name=f"{struct_name} — {data['complexity']}",
+            name=f"{struct_name} -- {data['complexity']}",
             line=dict(color=COLORS.get(struct_name, "#3b82f6"), width=3),
             marker=dict(size=10),
         ))
@@ -155,8 +155,8 @@ if __name__ == "__main__":
         build_and_run()
     else:
         if not CSV_FILE.exists():
-            sys.exit(f"ERROR: {CSV_FILE} not found — run without --graph-only first")
-        print("Skipping build/run — using existing results.csv")
+            sys.exit(f"ERROR: {CSV_FILE} not found -- run without --graph-only first")
+        print("Skipping build/run -- using existing results.csv")
     rows = read_results()
     operations = group_by_operation(rows)
     generate_html(operations)

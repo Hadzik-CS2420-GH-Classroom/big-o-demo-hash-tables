@@ -1,6 +1,6 @@
 # Big O Demo: Hash Tables
 
-**Not graded** — this is a runnable demonstration, not an assignment.
+**Not graded** -- this is a runnable demonstration, not an assignment.
 
 ## What This Shows
 

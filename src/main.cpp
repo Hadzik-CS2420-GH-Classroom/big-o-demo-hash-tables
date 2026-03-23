@@ -8,7 +8,7 @@
 //   - Chaining: each bucket is a linked list
 //   - Linear probing: on collision, scan forward to the next open slot
 //
-// Not graded — run it, read the output, and observe the patterns.
+// Not graded -- run it, read the output, and observe the patterns.
 // ============================================================================
 
 #include <chrono>
@@ -24,7 +24,7 @@
 
 // ── Simple Hash Function ────────────────────────────────────────────────────
 // Sum of character values mod capacity. Intentionally simple so students
-// can see how it works — not a production-quality hash.
+// can see how it works -- not a production-quality hash.
 
 size_t simple_hash(const std::string& key, size_t capacity) {
     size_t sum = 0;
@@ -56,7 +56,7 @@ public:
 
     void insert(const std::string& key, int value) {
         size_t index = simple_hash(key, capacity_);
-        // Check if key already exists — update if so
+        // Check if key already exists -- update if so
         for (auto& [k, v] : buckets_[index]) {
             if (k == key) {
                 v = value;
@@ -88,7 +88,7 @@ public:
         return false;
     }
 
-    // Resize: allocate a new bucket array and rehash everything — O(n)
+    // Resize: allocate a new bucket array and rehash everything -- O(n)
     void resize(size_t new_capacity) {
         std::vector<std::list<std::pair<std::string, int>>> new_buckets(new_capacity);
         for (auto& chain : buckets_) {
@@ -125,7 +125,7 @@ public:
     }
 
     void insert(const std::string& key, int value) {
-        // Don't allow the table to fill completely — leave at least one EMPTY
+        // Don't allow the table to fill completely -- leave at least one EMPTY
         // slot so probing always terminates
         if (size_ + 1 >= capacity_) return;
 
@@ -176,7 +176,7 @@ public:
         return false;
     }
 
-    // Resize: allocate new arrays and rehash everything — O(n)
+    // Resize: allocate new arrays and rehash everything -- O(n)
     void resize(size_t new_capacity) {
         std::vector<std::string> old_keys = std::move(keys_);
         std::vector<int> old_values = std::move(values_);
@@ -260,13 +260,13 @@ int main() {
     std::cout << "  - O(1) avg: growth stays near 1x (constant per operation)\n";
     std::cout << "  - O(n) resize: total time grows linearly with n\n";
 
-    std::vector<int> sizes = {1000, 5000, 10000, 50000};
+    std::vector<int> sizes = {1000, 2000, 5000, 10000};
     std::vector<BenchResult> results;
 
-    // ── Section 1: Chaining — Insert, Search, Remove (low load factor) ──
+    // ── Section 1: Chaining -- Insert, Search, Remove (low load factor) ──
     // Capacity = 2 * n  =>  load factor ~ 0.5  =>  short chains  =>  O(1)
 
-    print_header("Chaining insert — O(1) avg  [load factor ~0.5]");
+    print_header("Chaining insert -- O(1) avg  [load factor ~0.5]");
     double prev = 0;
     for (int n : sizes) {
         auto keys = generate_keys(n);
@@ -280,7 +280,7 @@ int main() {
         prev = per_op;
     }
 
-    print_header("Chaining search — O(1) avg  [load factor ~0.5]");
+    print_header("Chaining search -- O(1) avg  [load factor ~0.5]");
     prev = 0;
     for (int n : sizes) {
         auto keys = generate_keys(n);
@@ -295,7 +295,7 @@ int main() {
         prev = per_op;
     }
 
-    print_header("Chaining remove — O(1) avg  [load factor ~0.5]");
+    print_header("Chaining remove -- O(1) avg  [load factor ~0.5]");
     prev = 0;
     for (int n : sizes) {
         auto keys = generate_keys(n);
@@ -310,10 +310,10 @@ int main() {
         prev = per_op;
     }
 
-    // ── Section 2: Linear Probing — Insert, Search, Remove (low load factor)
+    // ── Section 2: Linear Probing -- Insert, Search, Remove (low load factor)
     // Capacity = 2 * n  =>  load factor ~ 0.5  =>  few probes  =>  O(1)
 
-    print_header("Linear probing insert — O(1) avg  [load factor ~0.5]");
+    print_header("Linear probing insert -- O(1) avg  [load factor ~0.5]");
     prev = 0;
     for (int n : sizes) {
         auto keys = generate_keys(n);
@@ -327,7 +327,7 @@ int main() {
         prev = per_op;
     }
 
-    print_header("Linear probing search — O(1) avg  [load factor ~0.5]");
+    print_header("Linear probing search -- O(1) avg  [load factor ~0.5]");
     prev = 0;
     for (int n : sizes) {
         auto keys = generate_keys(n);
@@ -342,7 +342,7 @@ int main() {
         prev = per_op;
     }
 
-    print_header("Linear probing remove — O(1) avg  [load factor ~0.5]");
+    print_header("Linear probing remove -- O(1) avg  [load factor ~0.5]");
     prev = 0;
     for (int n : sizes) {
         auto keys = generate_keys(n);
@@ -362,11 +362,11 @@ int main() {
     // Higher load factor = longer chains = slower operations
 
     std::cout << "\n============================================================\n";
-    std::cout << "  Load Factor Impact on Chaining Search (n = 50000)\n";
+    std::cout << "  Load Factor Impact on Chaining Search (n = 10000)\n";
     std::cout << "============================================================\n";
     std::cout << "\n  Higher load factor = longer chains = more comparisons\n";
 
-    int n_load = 50000;
+    int n_load = 10000;
     auto keys_load = generate_keys(n_load);
 
     std::cout << "\n";
@@ -406,7 +406,7 @@ int main() {
     // because of clustering. Can't exceed load factor 1.0.
 
     std::cout << "\n============================================================\n";
-    std::cout << "  Load Factor Impact on Linear Probing Search (n = 50000)\n";
+    std::cout << "  Load Factor Impact on Linear Probing Search (n = 10000)\n";
     std::cout << "============================================================\n";
     std::cout << "\n  Linear probing clusters badly near load factor 1.0.\n";
     std::cout << "  Cannot exceed 1.0 (table is full).\n";
@@ -440,10 +440,10 @@ int main() {
     std::cout << "\n  Notice: linear probing degrades faster than chaining.\n";
     std::cout << "  Clustering causes long probe sequences near capacity.\n";
 
-    // ── Section 5: Resize Benchmark — O(n) ──────────────────────────────
+    // ── Section 5: Resize Benchmark -- O(n) ──────────────────────────────
     // Resizing requires rehashing every element into a new array.
 
-    print_header("Chaining resize (double capacity) — O(n)");
+    print_header("Chaining resize (double capacity) -- O(n)");
     prev = 0;
     for (int n : sizes) {
         auto keys = generate_keys(n);
@@ -457,7 +457,7 @@ int main() {
         prev = t;
     }
 
-    print_header("Linear probing resize (double capacity) — O(n)");
+    print_header("Linear probing resize (double capacity) -- O(n)");
     prev = 0;
     for (int n : sizes) {
         auto keys = generate_keys(n);
@@ -485,13 +485,13 @@ int main() {
     std::cout << "  resize    | O(n)             | O(n)             | Must rehash everything\n";
     std::cout << "\n";
     std::cout << "  Key takeaway: Hash tables give O(1) AVERAGE case for\n";
-    std::cout << "  insert/search/remove — but only with a good load factor.\n";
+    std::cout << "  insert/search/remove -- but only with a good load factor.\n";
     std::cout << "\n";
     std::cout << "  Load factor = n / capacity\n";
-    std::cout << "    - Low  (0.5): fast — few collisions\n";
-    std::cout << "    - High (0.9): slow — many collisions, long chains/probes\n";
+    std::cout << "    - Low  (0.5): fast -- few collisions\n";
+    std::cout << "    - High (0.9): slow -- many collisions, long chains/probes\n";
     std::cout << "    - Linear probing degrades faster than chaining\n";
-    std::cout << "    - Resize is O(n) — the cost you pay to keep load factor low\n";
+    std::cout << "    - Resize is O(n) -- the cost you pay to keep load factor low\n";
 
     // ── Write CSV and generate charts ──────────────────────────────────
     std::string repo_dir = REPO_DIR;

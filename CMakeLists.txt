@@ -11,3 +11,10 @@ add_executable(${PROJECT_NAME} src/main.cpp)
 target_compile_definitions(${PROJECT_NAME} PRIVATE
     REPO_DIR="${CMAKE_SOURCE_DIR}"
 )
+
+# Space complexity demo
+set(SPACE_TARGET "${PROJECT_NAME}-space")
+add_executable(${SPACE_TARGET} src/space_main.cpp)
+target_compile_definitions(${SPACE_TARGET} PRIVATE
+    REPO_DIR="${CMAKE_SOURCE_DIR}"
+)

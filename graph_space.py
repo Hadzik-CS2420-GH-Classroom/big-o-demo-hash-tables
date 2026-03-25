@@ -106,12 +106,20 @@ def build_memory_growth_chart(rows):
 
 
 def build_load_factor_chart(rows):
-    """Stacked bar: used memory (entries) vs wasted memory (empty slots)."""
+    """Stacked bar: entry memory vs empty-bucket overhead.
+
+    For chaining, memory = bucket_array + node_memory.
+    - bucket_array = capacity * bucket_size (scales with capacity, wasted when empty)
+    - node_memory = n * node_size (constant for same n -- this is the "used" part)
+
+    At different load factors, n is the same but capacity = n/LF changes.
+    So the entry cost (green) is the same in every bar, and the bucket
+    overhead (red) grows as LF drops (bigger table = more buckets).
+    """
     data = [r for r in rows if r["measurement"] == "load_factor_memory"]
     if not data:
         return None
 
-    # Extract load factor from complexity field (e.g. "LF=0.3")
     lfs = []
     for r in data:
         try:
@@ -120,21 +128,37 @@ def build_load_factor_chart(rows):
             lfs.append(0)
 
     totals = [float(r["memory_kb"]) for r in data]
+    n = int(data[0]["n"])
 
-    # The highest LF bar is closest to "just the entries" -- use it as baseline
-    # (at LF=1.0, capacity ~= n, so almost no waste)
-    min_memory = min(totals)  # approximate "entries only" cost
+    # Compute entry-only cost: at LF=1.0, capacity = n, so bucket overhead
+    # is minimal. We can estimate entry cost by extrapolating:
+    # total = entry_cost + (capacity * bucket_overhead_per_slot)
+    # At two different LFs with same n:
+    #   total1 = entry_cost + (n/lf1) * B
+    #   total2 = entry_cost + (n/lf2) * B
+    # Solve: B = (total1 - total2) / (n/lf1 - n/lf2)
+    #         entry_cost = total1 - (n/lf1) * B
+    if len(lfs) >= 2 and lfs[0] != lfs[1]:
+        cap1 = n / lfs[0]
+        cap2 = n / lfs[1]
+        B = (totals[0] - totals[1]) / (cap1 - cap2)  # KB per slot
+        entry_cost = totals[0] - cap1 * B
+        if entry_cost < 0:
+            entry_cost = 0
+    else:
+        # Fallback: use highest-LF bar as approximation
+        entry_cost = min(totals)
 
-    used = [min_memory] * len(totals)
-    wasted = [t - min_memory for t in totals]
+    # Now split each bar: green = entry_cost (constant), red = the rest
+    used = [entry_cost] * len(totals)
+    wasted = [max(0, t - entry_cost) for t in totals]
 
     labels = [f"{lf:.1f}" for lf in lfs]
 
     fig = go.Figure()
 
-    # Green: used memory (entries) -- same height in every bar
     fig.add_trace(go.Bar(
-        name="Entries (used)",
+        name=f"Entries ({n:,} items)",
         x=labels,
         y=used,
         marker_color="#2ecc71",
@@ -143,13 +167,12 @@ def build_load_factor_chart(rows):
         insidetextanchor="middle",
     ))
 
-    # Red: wasted memory (empty slots) -- varies by load factor
     fig.add_trace(go.Bar(
-        name="Empty slots (wasted)",
+        name="Empty bucket overhead",
         x=labels,
         y=wasted,
         marker_color="#e74c3c",
-        text=[f"+{w:.0f} KB" if w > 10 else "" for w in wasted],
+        text=[f"+{w:.0f} KB" if w > 20 else "" for w in wasted],
         textposition="inside",
         insidetextanchor="middle",
     ))
@@ -157,8 +180,9 @@ def build_load_factor_chart(rows):
     fig.update_layout(
         barmode="stack",
         title=dict(
-            text="Load Factor vs Memory (Chaining, n=10000)<br>"
-                 "<sup>Green = entries (same in all bars) | Red = empty allocated slots</sup>",
+            text=f"Load Factor vs Memory (Chaining, n={n:,})<br>"
+                 "<sup>Green = entry nodes (same n, same cost) | "
+                 "Red = empty bucket overhead (bigger table = more waste)</sup>",
             font=dict(size=20)),
         xaxis_title="Load Factor",
         yaxis_title="Estimated Memory (KB)",

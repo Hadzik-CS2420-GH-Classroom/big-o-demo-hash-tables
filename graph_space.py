@@ -106,7 +106,7 @@ def build_memory_growth_chart(rows):
 
 
 def build_load_factor_chart(rows):
-    """Memory vs load factor for chaining."""
+    """Stacked bar: used memory (entries) vs wasted memory (empty slots)."""
     data = [r for r in rows if r["measurement"] == "load_factor_memory"]
     if not data:
         return None
@@ -119,25 +119,55 @@ def build_load_factor_chart(rows):
         except ValueError:
             lfs.append(0)
 
+    totals = [float(r["memory_kb"]) for r in data]
+
+    # The highest LF bar is closest to "just the entries" -- use it as baseline
+    # (at LF=1.0, capacity ~= n, so almost no waste)
+    min_memory = min(totals)  # approximate "entries only" cost
+
+    used = [min_memory] * len(totals)
+    wasted = [t - min_memory for t in totals]
+
+    labels = [f"{lf:.1f}" for lf in lfs]
+
     fig = go.Figure()
+
+    # Green: used memory (entries) -- same height in every bar
     fig.add_trace(go.Bar(
-        x=[f"{lf:.1f}" for lf in lfs],
-        y=[float(r["memory_kb"]) for r in data],
-        marker_color="#2563eb",
-        text=[f"{float(r['memory_kb']):.1f} KB" for r in data],
-        textposition="auto",
+        name="Entries (used)",
+        x=labels,
+        y=used,
+        marker_color="#2ecc71",
+        text=[f"{u:.0f} KB" for u in used],
+        textposition="inside",
+        insidetextanchor="middle",
+    ))
+
+    # Red: wasted memory (empty slots) -- varies by load factor
+    fig.add_trace(go.Bar(
+        name="Empty slots (wasted)",
+        x=labels,
+        y=wasted,
+        marker_color="#e74c3c",
+        text=[f"+{w:.0f} KB" if w > 10 else "" for w in wasted],
+        textposition="inside",
+        insidetextanchor="middle",
     ))
 
     fig.update_layout(
-        title=dict(text="Load Factor vs Memory (Chaining, n=10000)",
-                   font=dict(size=22)),
+        barmode="stack",
+        title=dict(
+            text="Load Factor vs Memory (Chaining, n=10000)<br>"
+                 "<sup>Green = entries (same in all bars) | Red = empty allocated slots</sup>",
+            font=dict(size=20)),
         xaxis_title="Load Factor",
         yaxis_title="Estimated Memory (KB)",
         yaxis=dict(rangemode="tozero"),
         template="plotly_white",
         font=dict(size=14),
-        margin=dict(t=60, b=60),
-        height=450,
+        legend=dict(font=dict(size=13), orientation="h", y=-0.15, x=0.5, xanchor="center"),
+        margin=dict(t=80, b=80),
+        height=500,
     )
     return fig
 

@@ -217,25 +217,26 @@ def generate_html(rows):
   <span class="key-term">Load factor = n / capacity</span> -- how full the table is.
   If you store 10,000 items in a table with 20,000 slots, the load factor is 0.5 (50% full).</p>
   <p><strong>What to look for:</strong> The bars get <em>shorter</em> as load factor goes up.
-  That means <em>less memory</em> at higher load factors.</p>
-  <p><strong>Wait -- less memory is good, right?</strong> Yes, but there's a catch.
-  From the time-complexity demo, you saw that higher load factors make operations <em>slower</em>
-  because of more collisions. This is the fundamental tradeoff:</p>
+  A lower load factor means the table resizes to a <em>larger capacity</em>, so more total memory is allocated.</p>
+  <p><strong>Why does a bigger table use more memory?</strong> The entries themselves use the same memory either way.
+  The difference is <strong>empty slots</strong>: at LF 0.3, only 30% of allocated slots hold data -- the other 70% sit empty.
+  Those empty slots are what keep lookups fast (short probe sequences, short chains).
+  This is the fundamental tradeoff:</p>
 </div>
 <div class="tradeoff">
   <div>
     <h3>Low load factor (0.3)</h3>
     <ul>
-      <li>Lots of empty buckets</li>
-      <li>Uses MORE memory</li>
+      <li>Table resizes to LARGER capacity</li>
+      <li>70% of slots sit empty (wasted memory)</li>
       <li>But lookups are FAST (few collisions)</li>
     </ul>
   </div>
   <div>
     <h3>High load factor (0.9)</h3>
     <ul>
-      <li>Most buckets are full</li>
-      <li>Uses LESS memory</li>
+      <li>Table stays at SMALLER capacity</li>
+      <li>Only 10% of slots are empty (efficient)</li>
       <li>But lookups are SLOWER (many collisions)</li>
     </ul>
   </div>

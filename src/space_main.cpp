@@ -308,13 +308,14 @@ int main() {
     std::cout << "  Probing:  flat arrays, but every slot is allocated\n";
 
     // ── Section 3: Load Factor Impact on Memory ─────────────────────────
-    // Lower load factor = more capacity = more wasted space
+    // Lower load factor = table resizes to larger capacity = more wasted space
 
     std::cout << "\n============================================================\n";
     std::cout << "  Load Factor vs Memory Usage (n = 10000)\n";
     std::cout << "============================================================\n";
-    std::cout << "\n  Lower load factor = more empty buckets = more wasted memory.\n";
-    std::cout << "  This is the space-time tradeoff.\n";
+    std::cout << "\n  Lower load factor = table needs LARGER capacity = more total memory allocated.\n";
+    std::cout << "  The entries use the same memory either way -- it's the empty slots that waste space.\n";
+    std::cout << "  This is the space-time tradeoff: bigger table = faster lookups, but more wasted memory.\n";
 
     int n_load = 10000;
     auto keys_load = generate_keys(n_load);
@@ -347,8 +348,9 @@ int main() {
                            "LF=" + std::to_string(lf).substr(0, 3), n_load, mem_kb});
     }
 
-    std::cout << "\n  Notice: lower load factor uses MORE memory for the same data.\n";
-    std::cout << "  You trade memory for faster lookups.\n";
+    std::cout << "\n  Notice: lower load factor requires a LARGER table for the same n entries.\n";
+    std::cout << "  More slots allocated = more total memory, but most sit empty.\n";
+    std::cout << "  The tradeoff: those empty slots keep probe sequences short and chains small.\n";
 
     // ── Section 4: Resize Memory Spike ──────────────────────────────────
     // During resize, both old and new arrays exist briefly -- 2x memory.
@@ -403,7 +405,7 @@ int main() {
     std::cout << "    - Memory grows linearly with the number of elements\n";
     std::cout << "    - Chaining has per-node pointer overhead (prev + next)\n";
     std::cout << "    - Probing allocates all slots upfront (empty slots waste space)\n";
-    std::cout << "    - Lower load factor = faster ops but MORE memory used\n";
+    std::cout << "    - Lower load factor = larger table = faster ops, but more wasted slots\n";
     std::cout << "    - Resize causes a temporary ~2x memory spike\n";
 
     // ── Write CSV ───────────────────────────────────────────────────────

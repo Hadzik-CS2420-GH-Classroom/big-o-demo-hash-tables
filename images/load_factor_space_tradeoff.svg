@@ -1,92 +1,88 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 520" font-family="'Segoe UI', Arial, sans-serif">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 530" font-family="'Segoe UI', Arial, sans-serif">
   <rect width="100%" height="100%" fill="white"/>
 
   <!-- Title -->
-  <text x="440" y="30" text-anchor="middle" fill="#1a1a1a" font-size="22" font-weight="bold">Space-Time Tradeoff: Load Factor vs Memory Usage</text>
-  <text x="440" y="52" text-anchor="middle" fill="#555" font-size="13">Same 1,000 entries stored at different load factors. Lower load factor = more empty slots = more wasted memory.</text>
+  <text x="440" y="30" text-anchor="middle" fill="#1a1a1a" font-size="22" font-weight="bold">Space-Time Tradeoff: How Full Is Your Table?</text>
+  <text x="440" y="52" text-anchor="middle" fill="#555" font-size="13">Same capacity (4,000 slots), different number of entries. Lower load factor = more empty slots wasting memory.</text>
 
   <!-- Scenario label -->
-  <text x="440" y="78" text-anchor="middle" fill="#888" font-size="12">All examples: n = 1,000 entries (probing hash table, each slot ~72 bytes)</text>
+  <text x="440" y="78" text-anchor="middle" fill="#888" font-size="12">All examples: capacity = 4,000 slots (probing hash table, each slot ~72 bytes = 288 KB total allocated)</text>
 
-  <!-- ===== Bar chart area ===== -->
   <!-- Y axis -->
-  <line x1="120" y1="100" x2="120" y2="380" stroke="#555" stroke-width="1.5"/>
+  <line x1="120" y1="100" x2="120" y2="390" stroke="#555" stroke-width="1.5"/>
   <!-- X axis -->
-  <line x1="120" y1="380" x2="820" y2="380" stroke="#555" stroke-width="1.5"/>
+  <line x1="120" y1="390" x2="820" y2="390" stroke="#555" stroke-width="1.5"/>
 
   <!-- Y axis label -->
-  <text x="30" y="240" text-anchor="middle" fill="#555" font-size="12" transform="rotate(-90, 30, 240)">Total Memory (KB)</text>
+  <text x="30" y="245" text-anchor="middle" fill="#555" font-size="12" transform="rotate(-90, 30, 245)">Slots (out of 4,000)</text>
 
-  <!-- Y axis ticks: scale 0-300KB, y maps 380 (0) to 100 (300KB) -->
-  <text x="112" y="384" text-anchor="end" fill="#888" font-size="10">0</text>
-  <line x1="115" y1="380" x2="120" y2="380" stroke="#555" stroke-width="1"/>
+  <!-- Y axis ticks: scale 0-4000, y maps 390 (0) to 100 (4000) -->
+  <text x="112" y="394" text-anchor="end" fill="#888" font-size="10">0</text>
 
-  <text x="112" y="287" text-anchor="end" fill="#888" font-size="10">100</text>
-  <line x1="115" y1="286.7" x2="820" y2="286.7" stroke="#eee" stroke-width="1"/>
+  <text x="112" y="318" text-anchor="end" fill="#888" font-size="10">1,000</text>
+  <line x1="115" y1="317.5" x2="820" y2="317.5" stroke="#eee" stroke-width="1"/>
 
-  <text x="112" y="194" text-anchor="end" fill="#888" font-size="10">200</text>
-  <line x1="115" y1="193.3" x2="820" y2="193.3" stroke="#eee" stroke-width="1"/>
+  <text x="112" y="246" text-anchor="end" fill="#888" font-size="10">2,000</text>
+  <line x1="115" y1="245" x2="820" y2="245" stroke="#eee" stroke-width="1"/>
 
-  <text x="112" y="104" text-anchor="end" fill="#888" font-size="10">300</text>
+  <text x="112" y="174" text-anchor="end" fill="#888" font-size="10">3,000</text>
+  <line x1="115" y1="172.5" x2="820" y2="172.5" stroke="#eee" stroke-width="1"/>
+
+  <text x="112" y="104" text-anchor="end" fill="#888" font-size="10">4,000</text>
   <line x1="115" y1="100" x2="820" y2="100" stroke="#eee" stroke-width="1"/>
 
-  <!-- ===== Bar 1: Load Factor 0.25 ===== -->
-  <!-- capacity = 4000, total = 4000 * 72 = 288KB, used = 1000 * 72 = 72KB, wasted = 216KB -->
-  <!-- bar height: 288/300 * 280 = 268.8, top = 380 - 268.8 = 111.2 -->
-  <!-- used portion: 72/300 * 280 = 67.2, top of used = 380 - 67.2 = 312.8 -->
-  <rect x="160" y="111" width="100" height="202" rx="0" fill="#f8d7da" stroke="#e74c3c" stroke-width="1.5"/>
-  <rect x="160" y="313" width="100" height="67" rx="0" fill="#2ecc71" stroke="#27ae60" stroke-width="1.5"/>
-  <text x="210" y="220" text-anchor="middle" fill="#c62828" font-size="12" font-weight="bold">216 KB</text>
-  <text x="210" y="238" text-anchor="middle" fill="#c62828" font-size="11">wasted</text>
-  <text x="210" y="350" text-anchor="middle" fill="#fff" font-size="11" font-weight="bold">72 KB</text>
-  <text x="210" y="400" text-anchor="middle" fill="#555" font-size="12" font-weight="bold">LF = 0.25</text>
-  <text x="210" y="414" text-anchor="middle" fill="#888" font-size="10">cap = 4,000</text>
-  <text x="210" y="96" text-anchor="middle" fill="#c62828" font-size="12" font-weight="bold">288 KB</text>
+  <!-- All bars are full height (4000 slots = 290px from 100 to 390) -->
+  <!-- Green (used) from bottom, red/orange (empty) on top -->
 
-  <!-- ===== Bar 2: Load Factor 0.50 ===== -->
-  <!-- capacity = 2000, total = 2000 * 72 = 144KB, used = 72KB, wasted = 72KB -->
-  <!-- bar height: 144/300 * 280 = 134.4, top = 380 - 134.4 = 245.6 -->
-  <rect x="320" y="246" width="100" height="67" rx="0" fill="#fff3e0" stroke="#e67e22" stroke-width="1.5"/>
-  <rect x="320" y="313" width="100" height="67" rx="0" fill="#2ecc71" stroke="#27ae60" stroke-width="1.5"/>
-  <text x="370" y="284" text-anchor="middle" fill="#e65100" font-size="12" font-weight="bold">72 KB</text>
-  <text x="370" y="298" text-anchor="middle" fill="#e65100" font-size="11">wasted</text>
-  <text x="370" y="350" text-anchor="middle" fill="#fff" font-size="11" font-weight="bold">72 KB</text>
-  <text x="370" y="400" text-anchor="middle" fill="#555" font-size="12" font-weight="bold">LF = 0.50</text>
-  <text x="370" y="414" text-anchor="middle" fill="#888" font-size="10">cap = 2,000</text>
-  <text x="370" y="236" text-anchor="middle" fill="#e65100" font-size="12" font-weight="bold">144 KB</text>
+  <!-- ===== Bar 1: LF = 0.25, entries = 1000, empty = 3000 ===== -->
+  <!-- used height: 1000/4000 * 290 = 72.5, empty height: 217.5 -->
+  <rect x="160" y="100" width="100" height="217" rx="0" fill="#f8d7da" stroke="#e74c3c" stroke-width="1.5"/>
+  <rect x="160" y="317" width="100" height="73" rx="0" fill="#2ecc71" stroke="#27ae60" stroke-width="1.5"/>
+  <text x="210" y="200" text-anchor="middle" fill="#c62828" font-size="13" font-weight="bold">3,000</text>
+  <text x="210" y="218" text-anchor="middle" fill="#c62828" font-size="11">empty (75%)</text>
+  <text x="210" y="358" text-anchor="middle" fill="#fff" font-size="12" font-weight="bold">1,000</text>
+  <text x="210" y="408" text-anchor="middle" fill="#555" font-size="12" font-weight="bold">LF = 0.25</text>
+  <text x="210" y="422" text-anchor="middle" fill="#888" font-size="10">1,000 entries</text>
 
-  <!-- ===== Bar 3: Load Factor 0.75 ===== -->
-  <!-- capacity = 1333, total = 1333 * 72 = 96KB, used = 72KB, wasted = 24KB -->
-  <!-- bar height: 96/300 * 280 = 89.6, top = 380 - 89.6 = 290.4 -->
-  <rect x="480" y="290" width="100" height="23" rx="0" fill="#e3f2fd" stroke="#1565c0" stroke-width="1.5"/>
-  <rect x="480" y="313" width="100" height="67" rx="0" fill="#2ecc71" stroke="#27ae60" stroke-width="1.5"/>
-  <text x="530" y="306" text-anchor="middle" fill="#1565c0" font-size="10">24 KB</text>
-  <text x="530" y="350" text-anchor="middle" fill="#fff" font-size="11" font-weight="bold">72 KB</text>
-  <text x="530" y="400" text-anchor="middle" fill="#555" font-size="12" font-weight="bold">LF = 0.75</text>
-  <text x="530" y="414" text-anchor="middle" fill="#888" font-size="10">cap = 1,333</text>
-  <text x="530" y="280" text-anchor="middle" fill="#1565c0" font-size="12" font-weight="bold">96 KB</text>
+  <!-- ===== Bar 2: LF = 0.50, entries = 2000, empty = 2000 ===== -->
+  <!-- used height: 145, empty height: 145 -->
+  <rect x="320" y="100" width="100" height="145" rx="0" fill="#fff3e0" stroke="#e67e22" stroke-width="1.5"/>
+  <rect x="320" y="245" width="100" height="145" rx="0" fill="#2ecc71" stroke="#27ae60" stroke-width="1.5"/>
+  <text x="370" y="178" text-anchor="middle" fill="#e65100" font-size="13" font-weight="bold">2,000</text>
+  <text x="370" y="196" text-anchor="middle" fill="#e65100" font-size="11">empty (50%)</text>
+  <text x="370" y="324" text-anchor="middle" fill="#fff" font-size="12" font-weight="bold">2,000</text>
+  <text x="370" y="408" text-anchor="middle" fill="#555" font-size="12" font-weight="bold">LF = 0.50</text>
+  <text x="370" y="422" text-anchor="middle" fill="#888" font-size="10">2,000 entries</text>
 
-  <!-- ===== Bar 4: Load Factor 1.00 ===== -->
-  <!-- capacity = 1000, total = 1000 * 72 = 72KB, used = 72KB, wasted = 0 -->
-  <!-- bar height: 72/300 * 280 = 67.2, top = 380 - 67.2 = 312.8 -->
-  <rect x="640" y="313" width="100" height="67" rx="0" fill="#2ecc71" stroke="#27ae60" stroke-width="1.5"/>
-  <text x="690" y="350" text-anchor="middle" fill="#fff" font-size="11" font-weight="bold">72 KB</text>
-  <text x="690" y="400" text-anchor="middle" fill="#555" font-size="12" font-weight="bold">LF = 1.00</text>
-  <text x="690" y="414" text-anchor="middle" fill="#888" font-size="10">cap = 1,000</text>
-  <text x="690" y="304" text-anchor="middle" fill="#27ae60" font-size="12" font-weight="bold">72 KB</text>
+  <!-- ===== Bar 3: LF = 0.75, entries = 3000, empty = 1000 ===== -->
+  <!-- used height: 217.5, empty height: 72.5 -->
+  <rect x="480" y="100" width="100" height="73" rx="0" fill="#e3f2fd" stroke="#1565c0" stroke-width="1.5"/>
+  <rect x="480" y="173" width="100" height="217" rx="0" fill="#2ecc71" stroke="#27ae60" stroke-width="1.5"/>
+  <text x="530" y="142" text-anchor="middle" fill="#1565c0" font-size="12" font-weight="bold">1,000</text>
+  <text x="530" y="156" text-anchor="middle" fill="#1565c0" font-size="10">empty (25%)</text>
+  <text x="530" y="290" text-anchor="middle" fill="#fff" font-size="12" font-weight="bold">3,000</text>
+  <text x="530" y="408" text-anchor="middle" fill="#555" font-size="12" font-weight="bold">LF = 0.75</text>
+  <text x="530" y="422" text-anchor="middle" fill="#888" font-size="10">3,000 entries</text>
+
+  <!-- ===== Bar 4: LF = 1.00, entries = 4000, empty = 0 ===== -->
+  <!-- used height: 290, empty height: 0 -->
+  <rect x="640" y="100" width="100" height="290" rx="0" fill="#2ecc71" stroke="#27ae60" stroke-width="1.5"/>
+  <text x="690" y="250" text-anchor="middle" fill="#fff" font-size="12" font-weight="bold">4,000</text>
+  <text x="690" y="408" text-anchor="middle" fill="#555" font-size="12" font-weight="bold">LF = 1.00</text>
+  <text x="690" y="422" text-anchor="middle" fill="#888" font-size="10">4,000 entries</text>
 
   <!-- Legend -->
-  <rect x="160" y="438" width="16" height="16" rx="2" fill="#2ecc71" stroke="#27ae60" stroke-width="1"/>
-  <text x="182" y="451" fill="#333" font-size="12">Used memory (n entries)</text>
-  <rect x="360" y="438" width="16" height="16" rx="2" fill="#f8d7da" stroke="#e74c3c" stroke-width="1"/>
-  <text x="382" y="451" fill="#333" font-size="12">Wasted memory (empty slots)</text>
+  <rect x="160" y="446" width="16" height="16" rx="2" fill="#2ecc71" stroke="#27ae60" stroke-width="1"/>
+  <text x="182" y="459" fill="#333" font-size="12">Occupied slots (entries stored)</text>
+  <rect x="400" y="446" width="16" height="16" rx="2" fill="#f8d7da" stroke="#e74c3c" stroke-width="1"/>
+  <text x="422" y="459" fill="#333" font-size="12">Empty slots (allocated but unused)</text>
 
   <!-- Insight boxes -->
-  <rect x="40" y="468" width="380" height="44" rx="8" fill="#fce4ec" stroke="#e74c3c" stroke-width="1.5"/>
-  <text x="230" y="486" text-anchor="middle" fill="#b71c1c" font-size="12" font-weight="bold">Low load factor = FAST but WASTEFUL</text>
-  <text x="230" y="502" text-anchor="middle" fill="#c62828" font-size="11">75% of memory is empty slots at LF = 0.25</text>
+  <rect x="40" y="478" width="390" height="44" rx="8" fill="#fce4ec" stroke="#e74c3c" stroke-width="1.5"/>
+  <text x="235" y="496" text-anchor="middle" fill="#b71c1c" font-size="12" font-weight="bold">LF = 0.25: you paid for 4,000 slots but only use 1,000</text>
+  <text x="235" y="512" text-anchor="middle" fill="#c62828" font-size="11">75% of allocated memory sits empty -- fast but wasteful</text>
 
-  <rect x="460" y="468" width="380" height="44" rx="8" fill="#e8f5e9" stroke="#27ae60" stroke-width="1.5"/>
-  <text x="650" y="486" text-anchor="middle" fill="#1b5e20" font-size="12" font-weight="bold">High load factor = EFFICIENT but SLOWER</text>
-  <text x="650" y="502" text-anchor="middle" fill="#2e7d32" font-size="11">Zero waste at LF = 1.0, but longer probe sequences</text>
+  <rect x="450" y="478" width="390" height="44" rx="8" fill="#e8f5e9" stroke="#27ae60" stroke-width="1.5"/>
+  <text x="645" y="496" text-anchor="middle" fill="#1b5e20" font-size="12" font-weight="bold">LF = 1.00: every slot you paid for is being used</text>
+  <text x="645" y="512" text-anchor="middle" fill="#2e7d32" font-size="11">Zero waste -- but probe sequences are long and slow</text>
 </svg>

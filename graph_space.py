@@ -217,10 +217,12 @@ def generate_html(rows):
   <span class="key-term">Load factor = n / capacity</span> -- how full the table is.
   If you store 10,000 items in a table with 20,000 slots, the load factor is 0.5 (50% full).</p>
   <p><strong>What to look for:</strong> The bars get <em>shorter</em> as load factor goes up.
-  A lower load factor means the table resizes to a <em>larger capacity</em>, so more total memory is allocated.</p>
-  <p><strong>Why does a bigger table use more memory?</strong> The entries themselves use the same memory either way.
-  The difference is <strong>empty slots</strong>: at LF 0.3, only 30% of allocated slots hold data -- the other 70% sit empty.
-  Those empty slots are what keep lookups fast (short probe sequences, short chains).
+  The load factor itself doesn't allocate memory -- it's just a ratio. What happens is:
+  when the load factor crosses the threshold, <strong>resize</strong> fires and allocates a <strong>new, larger table</strong>.
+  After resize, the load factor drops because the same entries now live in a bigger table.</p>
+  <p><strong>The result:</strong> a table with a low load factor has lots of <strong>empty slots</strong> --
+  allocated but unused. At LF 0.3, 70% of slots sit empty. Those empty slots are what keep
+  lookups fast (short probe sequences, short chains), but they cost memory.
   This is the fundamental tradeoff:</p>
 </div>
 <div class="tradeoff">
@@ -244,11 +246,12 @@ def generate_html(rows):
 {lf_div}
 
 <div class="explain" style="border-left-color: #059669; margin-top: 2.5rem;">
-  <p><strong>The big picture:</strong> Hash tables use O(n) memory, and you control
-  the constant factor by choosing your load factor. A lower load factor wastes more
-  memory but gives you faster O(1) operations. A higher load factor saves memory but
-  slows things down. When the table gets too full, you <em>resize</em> (double the capacity),
-  which costs O(n) time and briefly uses ~2x memory while both the old and new arrays exist.</p>
+  <p><strong>The big picture:</strong> Hash tables use O(n) memory. The load factor threshold
+  controls when resize happens, which determines how big the table gets relative to
+  the data. A lower threshold means resize fires sooner, creating a bigger table with
+  more empty slots -- faster lookups, but more wasted memory. A higher threshold lets
+  the table fill up more before resizing -- less waste, but slower operations.
+  Resize itself costs O(n) time and briefly uses ~2x memory while both old and new arrays exist.</p>
   <p>This space-time tradeoff is one of the most important ideas in data structures.</p>
 </div>
 

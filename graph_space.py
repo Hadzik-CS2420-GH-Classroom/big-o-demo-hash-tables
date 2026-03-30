@@ -122,7 +122,7 @@ def build_load_factor_chart(rows):
     # At LF=0.3, capacity = 10000/0.3 ~ 33333. Too big to visualize.
     # Instead, use a pedagogical example: capacity = 4000 slots
     capacity = 4000
-    lfs = [0.25, 0.50, 0.75, 1.00]
+    lfs = [0.25, 0.50, 0.75, 0.90]
     entries = [int(capacity * lf) for lf in lfs]
     empty = [capacity - e for e in entries]
 

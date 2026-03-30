@@ -64,12 +64,14 @@
   <text x="530" y="408" text-anchor="middle" fill="#555" font-size="12" font-weight="bold">LF = 0.75</text>
   <text x="530" y="422" text-anchor="middle" fill="#888" font-size="10">3,000 entries</text>
 
-  <!-- ===== Bar 4: LF = 1.00, entries = 4000, empty = 0 ===== -->
-  <!-- used height: 290, empty height: 0 -->
-  <rect x="640" y="100" width="100" height="290" rx="0" fill="#2ecc71" stroke="#27ae60" stroke-width="1.5"/>
-  <text x="690" y="250" text-anchor="middle" fill="#fff" font-size="12" font-weight="bold">4,000</text>
-  <text x="690" y="408" text-anchor="middle" fill="#555" font-size="12" font-weight="bold">LF = 1.00</text>
-  <text x="690" y="422" text-anchor="middle" fill="#888" font-size="10">4,000 entries</text>
+  <!-- ===== Bar 4: LF = 0.90, entries = 3600, empty = 400 ===== -->
+  <!-- used height: 3600/4000 * 290 = 261, empty height: 29 -->
+  <rect x="640" y="100" width="100" height="29" rx="0" fill="#e8f5e9" stroke="#27ae60" stroke-width="1.5"/>
+  <rect x="640" y="129" width="100" height="261" rx="0" fill="#2ecc71" stroke="#27ae60" stroke-width="1.5"/>
+  <text x="690" y="120" text-anchor="middle" fill="#1b5e20" font-size="10">400 (10%)</text>
+  <text x="690" y="268" text-anchor="middle" fill="#fff" font-size="12" font-weight="bold">3,600</text>
+  <text x="690" y="408" text-anchor="middle" fill="#555" font-size="12" font-weight="bold">LF = 0.90</text>
+  <text x="690" y="422" text-anchor="middle" fill="#888" font-size="10">3,600 entries</text>
 
   <!-- Legend -->
   <rect x="160" y="446" width="16" height="16" rx="2" fill="#2ecc71" stroke="#27ae60" stroke-width="1"/>
@@ -83,6 +85,6 @@
   <text x="235" y="512" text-anchor="middle" fill="#c62828" font-size="11">75% of allocated memory sits empty -- fast but wasteful</text>
 
   <rect x="450" y="478" width="390" height="44" rx="8" fill="#e8f5e9" stroke="#27ae60" stroke-width="1.5"/>
-  <text x="645" y="496" text-anchor="middle" fill="#1b5e20" font-size="12" font-weight="bold">LF = 1.00: every slot you paid for is being used</text>
-  <text x="645" y="512" text-anchor="middle" fill="#2e7d32" font-size="11">Zero waste -- but probe sequences are long and slow</text>
+  <text x="645" y="496" text-anchor="middle" fill="#1b5e20" font-size="12" font-weight="bold">LF = 0.90: almost full -- only 10% empty</text>
+  <text x="645" y="512" text-anchor="middle" fill="#2e7d32" font-size="11">Minimal waste -- but probe sequences are long and slow</text>
 </svg>

@@ -260,7 +260,7 @@ int main() {
     std::cout << "  - O(1) avg: growth stays near 1x (constant per operation)\n";
     std::cout << "  - O(n) resize: total time grows linearly with n\n";
 
-    std::vector<int> sizes = {1000, 2000, 5000, 10000};
+    std::vector<int> sizes = {1000, 2500, 5000, 10000};
     std::vector<BenchResult> results;
 
     // ── Section 1: Chaining -- Insert, Search, Remove (low load factor) ──

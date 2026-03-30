@@ -106,87 +106,62 @@ def build_memory_growth_chart(rows):
 
 
 def build_load_factor_chart(rows):
-    """Stacked bar: entry memory vs empty-bucket overhead.
+    """Stacked bar: same capacity table at different fill levels.
 
-    For chaining, memory = bucket_array + node_memory.
-    - bucket_array = capacity * bucket_size (scales with capacity, wasted when empty)
-    - node_memory = n * node_size (constant for same n -- this is the "used" part)
-
-    At different load factors, n is the same but capacity = n/LF changes.
-    So the entry cost (green) is the same in every bar, and the bucket
-    overhead (red) grows as LF drops (bigger table = more buckets).
+    Shows a fixed-capacity table (e.g. 4,000 slots) with different numbers
+    of entries at each load factor. Green = occupied slots, red = empty slots.
+    As LF increases, green grows and red shrinks. All bars are the same total
+    height (same capacity), making the tradeoff visually clear.
     """
     data = [r for r in rows if r["measurement"] == "load_factor_memory"]
     if not data:
         return None
 
-    lfs = []
-    for r in data:
-        try:
-            lfs.append(float(r["complexity"].replace("LF=", "")))
-        except ValueError:
-            lfs.append(0)
+    # Use the highest-capacity scenario to determine the fixed capacity
+    # The C++ demo uses n=10000 with LFs like 0.3, 0.5, 0.7, 0.9
+    # At LF=0.3, capacity = 10000/0.3 ~ 33333. Too big to visualize.
+    # Instead, use a pedagogical example: capacity = 4000 slots
+    capacity = 4000
+    lfs = [0.25, 0.50, 0.75, 1.00]
+    entries = [int(capacity * lf) for lf in lfs]
+    empty = [capacity - e for e in entries]
 
-    totals = [float(r["memory_kb"]) for r in data]
-    n = int(data[0]["n"])
-
-    # Compute entry-only cost: at LF=1.0, capacity = n, so bucket overhead
-    # is minimal. We can estimate entry cost by extrapolating:
-    # total = entry_cost + (capacity * bucket_overhead_per_slot)
-    # At two different LFs with same n:
-    #   total1 = entry_cost + (n/lf1) * B
-    #   total2 = entry_cost + (n/lf2) * B
-    # Solve: B = (total1 - total2) / (n/lf1 - n/lf2)
-    #         entry_cost = total1 - (n/lf1) * B
-    if len(lfs) >= 2 and lfs[0] != lfs[1]:
-        cap1 = n / lfs[0]
-        cap2 = n / lfs[1]
-        B = (totals[0] - totals[1]) / (cap1 - cap2)  # KB per slot
-        entry_cost = totals[0] - cap1 * B
-        if entry_cost < 0:
-            entry_cost = 0
-    else:
-        # Fallback: use highest-LF bar as approximation
-        entry_cost = min(totals)
-
-    # Now split each bar: green = entry_cost (constant), red = the rest
-    used = [entry_cost] * len(totals)
-    wasted = [max(0, t - entry_cost) for t in totals]
-
-    labels = [f"{lf:.1f}" for lf in lfs]
+    labels = [f"LF = {lf:.2f}" for lf in lfs]
 
     fig = go.Figure()
 
     fig.add_trace(go.Bar(
-        name=f"Entries ({n:,} items)",
+        name="Occupied slots (entries)",
         x=labels,
-        y=used,
+        y=entries,
         marker_color="#2ecc71",
-        text=[f"{u:.0f} KB" for u in used],
+        text=[f"{e:,}" for e in entries],
         textposition="inside",
         insidetextanchor="middle",
+        textfont=dict(size=14, color="white"),
     ))
 
     fig.add_trace(go.Bar(
-        name="Empty bucket overhead",
+        name="Empty slots (allocated but unused)",
         x=labels,
-        y=wasted,
+        y=empty,
         marker_color="#e74c3c",
-        text=[f"+{w:.0f} KB" if w > 20 else "" for w in wasted],
+        text=[f"{e:,} empty ({100*e//capacity}%)" if e > 0 else "" for e in empty],
         textposition="inside",
         insidetextanchor="middle",
+        textfont=dict(size=12, color="white"),
     ))
 
     fig.update_layout(
         barmode="stack",
         title=dict(
-            text=f"Load Factor vs Memory (Chaining, n={n:,})<br>"
-                 "<sup>Green = entry nodes (same n, same cost) | "
-                 "Red = empty bucket overhead (bigger table = more waste)</sup>",
-            font=dict(size=20)),
-        xaxis_title="Load Factor",
-        yaxis_title="Estimated Memory (KB)",
-        yaxis=dict(rangemode="tozero"),
+            text=f"How Full Is Your Table? (Same capacity = {capacity:,} slots)<br>"
+                 "<sup>Green = occupied slots | Red = empty slots (wasted memory). "
+                 "All bars are the same height (same total allocated memory).</sup>",
+            font=dict(size=18)),
+        xaxis_title="Load Factor (entries / capacity)",
+        yaxis_title=f"Slots (out of {capacity:,})",
+        yaxis=dict(rangemode="tozero", dtick=1000),
         template="plotly_white",
         font=dict(size=14),
         legend=dict(font=dict(size=13), orientation="h", y=-0.15, x=0.5, xanchor="center"),
@@ -199,6 +174,17 @@ def build_load_factor_chart(rows):
 def generate_html(rows):
     growth_chart = build_memory_growth_chart(rows)
     lf_chart = build_load_factor_chart(rows)
+
+    # Export static SVGs for Canvas page embedding
+    img_dir = REPO_DIR / "images"
+    img_dir.mkdir(exist_ok=True)
+    for fig, name in [(growth_chart, "space_memory_growth.svg"), (lf_chart, "space_load_factor.svg")]:
+        if fig is not None:
+            try:
+                fig.write_image(str(img_dir / name), format="svg", width=900, height=450)
+                print(f"  SVG: images/{name}")
+            except Exception:
+                pass  # kaleido not installed -- skip SVG export
 
     # Build chart HTML fragments, sharing one copy of plotly.js
     plotly_included = False
